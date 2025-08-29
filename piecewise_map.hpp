@@ -15,7 +15,7 @@
 #include <filesystem>
 
 namespace map_version {
-    
+
 const double EPSILON = 1e-6; // Utiliser une tolérance plus petite pour les comparaisons de double
 class PiecewiseLinearFunction ;
 
@@ -157,44 +157,22 @@ public:
             double delta_sum = sum - yi_prec;
             yi_prec = sum;
     
-            //std::cout << "x=" << x 
-            //          << " | F=" << F << " G=" << G 
-                    //   << " -> sum=" << sum 
-                    //   << " delta=" << delta_sum << "\n";
-    
+
             // déjà un point à x ?
             auto it_match = breakpoints.find(x);
             if (it_match != breakpoints.end()) {
-                ops.push_back({Operation::Update, x, delta_sum});
+                it_match->second = delta_sum;
             } else {
-                ops.push_back({Operation::Insert, x, delta_sum});
+                breakpoints[x] = delta_sum;
             }
     
             if (take_f) ++it_f;
             if (take_g) ++it_g;
         }
     
-        // Appliquer les opérations
-        for (auto& op : ops) {
-            breakpoints[op.x] = op.delta;
-        }
-    
         std::cout << "=== Sum completed ===\n";
     }
     
-
-        // // déjà un point à x ?
-        // auto it_match = breakpoints.find(x);
-        // if (it_match != breakpoints.end()) {
-        //     double old_deltay = it_match->second;
-        //     it_match->second = delta_sum;
-        //     nodeTrail_f.push_back({Operation_env::Update, x, old_deltay});
-        //     this->save();
-        // } else {
-        //     breakpoints[x] = delta_sum;
-        //     nodeTrail_f.push_back({Operation_env::Insert, x, 0});
-        //     this->save();
-        // }
 
 
     
