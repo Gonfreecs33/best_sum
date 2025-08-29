@@ -120,19 +120,8 @@ public:
             auto prev = it_f;   // copie
             --prev;           // recule d'un cran
             yi_prec = this->eval(prev->first);
-            //std::cout << "un noeud de f à gauche de g trouvé\n";
-            //std::cout << " first yi = " << yi_prec << "\n";
-            //std::cout << " first xi = " << prev->first << "\n";
         }
-    
-        struct Operation {
-            enum Type { Insert, Update } type;
-            double x;
-            double delta;
-        };
-        std::vector<Operation> ops;
-    
-        std::cout << "=== Starting sum ===\n";
+        //std::cout << "=== Starting sum ===\n";
     
         while (it_f != end_f || it_g != g.breakpoints.end()) {
             double x;
@@ -170,7 +159,7 @@ public:
             if (take_g) ++it_g;
         }
     
-        std::cout << "=== Sum completed ===\n";
+       // std::cout << "=== Sum completed ===\n";
     }
     
 
