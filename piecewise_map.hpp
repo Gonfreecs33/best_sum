@@ -121,7 +121,7 @@ public:
             --prev;           // recule d'un cran
             yi_prec = this->eval(prev->first);
         }
-        //std::cout << "=== Starting sum ===\n";
+    
     
         while (it_f != end_f || it_g != g.breakpoints.end()) {
             double x;
@@ -158,8 +158,6 @@ public:
             if (take_f) ++it_f;
             if (take_g) ++it_g;
         }
-    
-       // std::cout << "=== Sum completed ===\n";
     }
     
 
