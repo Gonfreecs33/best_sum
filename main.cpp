@@ -82,27 +82,6 @@ list_version::PiecewiseLinearFunction zigzag_list(int x_max, double y_min, doubl
     return f;
 }
 
-// list_version::PiecewiseLinearFunction zigzag_list(int x_max, double y_min, double y_max, int period) {
-//     list_version::PiecewiseLinearFunction f;
-//     double last_x = 0;
-//     double last_y = y_min; // début à y_min
-//     bool toggle = true;     // alterne entre y_min et y_max
-
-//     for (int x = period; x <= x_max; x += period) {
-//         double y = toggle ? y_max : y_min;
-//         auto seg = std::make_shared<list_version::Segment>(last_x, last_y, x, y);
-//         f.add_segment(seg);
-
-//         last_x = x;
-//         last_y = y;
-//         toggle = !toggle; // inverse pour le prochain segment
-
-//         cout << "segment: last_x=" << last_x << " last_y=" << last_y
-//              << " x=" << x << " y=" << y << endl;
-//     }
-//     return f;
-// }
-
 
 // ==================== Génération delta ====================
 map_version::PiecewiseLinearFunction delta_map(int x_max, int width, double amplitude) {
@@ -110,6 +89,7 @@ map_version::PiecewiseLinearFunction delta_map(int x_max, int width, double ampl
     int mid = x_max / 2;
     int left = mid - width / 2;
     int right = mid + width / 2;
+    g.removeBreakpoint(0.0);
     g.addBreakpoint(left, 0);
     g.addBreakpoint(mid, amplitude);
     g.addBreakpoint(right, -amplitude);
@@ -141,21 +121,26 @@ long long benchmark(Func f, int repeat = 1) {
         f();
         auto end = high_resolution_clock::now();
         total += duration_cast<milliseconds>(end - start).count();
+   
     }
     return total / repeat;
 }
 
 int main() {
-    int x_max =4000;
+
+    namespace fs = std::filesystem;
+    fs::create_directory("csv_data");  // crée le dossier si nécessaire
+    int x_max = 4000;
     double y_min = 10;
     double y_max = 20;
     int period = 1;
     int delta_max_width = x_max;
     double amplitude = 50;
-     int mid = x_max / 2;
+    int mid = x_max / 2;
 
 
     auto f_map = zigzag_map(x_max, y_min, y_max, period);
+        f_map.exportFunction("csv_data/f.csv");
     auto f_list = zigzag_list(x_max, y_min, y_max, period);
 
     ofstream out("timing_comparison.csv");
@@ -164,6 +149,8 @@ int main() {
     for (int width = 10; width <= delta_max_width; width += 10) {
         auto g_map = delta_map(x_max, width, amplitude);
         auto g_list = delta_list(x_max, width, amplitude);
+
+        g_map.exportFunction("csv_data/f_plus_g_" + std::to_string(width) + ".csv");
 
         // nodes de f_map dans la largeur de g_map
 
@@ -188,9 +175,11 @@ int main() {
         out << width << "," << t_map << "," << t_list << "," << nodes_in_g << "\n";
         cout << "Width=" << width << " map=" << t_map << " list=" << t_list
              << " nodes_in_g=" << nodes_in_g << endl;
+             cout << "left = " << left << " right =  " << right  << endl;
     }
 
     out.close();
     cout << "Données exportées vers timing_comparison.csv" << endl;
     return 0;
 }
+
